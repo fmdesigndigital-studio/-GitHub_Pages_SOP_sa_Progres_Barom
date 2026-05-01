@@ -1,411 +1,477 @@
 <!DOCTYPE html>
-<html lang="sr" translate="no">
+<html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOP: Postavljanje sajta na GitHub Pages</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS za moderan i responzivan dizajn -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --success-color: #10b981;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif !important;
-        }
-
+        /* Osiguravanje sistemskih fontova po zahtevu */
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 2rem 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f9;
+            color: #333333;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        /* Stilovi za progres traku */
+        .progress-bar-container {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+        }
+
+        .progress-track {
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            height: 12px;
             overflow: hidden;
-        }
-
-        header {
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background-color: #fff;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            position: relative;
             width: 100%;
-            height: 10px;
-            background-color: var(--border-color);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 0.75rem;
         }
 
-        .progress-bar {
+        .progress-fill {
+            background-color: #10b981; /* Moderna zelena */
             height: 100%;
-            background-color: var(--success-color);
             width: 0%;
-            transition: width 0.4s ease, background-color 0.4s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .progress-text {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        main {
-            padding: 2rem;
-        }
-
-        .phase {
-            margin-bottom: 2.5rem;
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .phase:last-child {
-            margin-bottom: 0;
-        }
-
-        h2 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-main);
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 0.5rem;
-        }
-
-        /* Checkbox styling */
-        .task {
+        /* Prilagođeni, moderni checkbox-ovi */
+        .custom-checkbox {
             display: flex;
             align-items: flex-start;
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
             margin-bottom: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            cursor: pointer;
         }
 
-        .task:hover {
-            background-color: var(--bg-color);
+        .custom-checkbox:hover {
+            background-color: #f8fafc;
         }
 
-        .task input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border: 2px solid var(--border-color);
+        .custom-checkbox input {
+            display: none;
+        }
+
+        .checkmark {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
             border-radius: 6px;
-            margin-right: 12px;
+            margin-right: 1rem;
             margin-top: 2px;
-            cursor: pointer;
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            flex-shrink: 0;
-            background-color: #fff;
+            background-color: white;
         }
 
-        .task input[type="checkbox"]:checked {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
+        .custom-checkbox input:checked + .checkmark {
+            background-color: #10b981;
+            border-color: #10b981;
         }
 
-        .task input[type="checkbox"]:checked::after {
-            content: '✓';
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            position: absolute;
+        .custom-checkbox input:checked + .checkmark::after {
+            content: "";
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 2px;
         }
 
-        .task span {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            transition: color 0.2s ease, text-decoration 0.2s ease;
-            padding-top: 1px;
-        }
-
-        .task input[type="checkbox"]:checked + span {
-            color: var(--text-muted);
+        .custom-checkbox input:checked ~ .task-text {
+            color: #64748b;
             text-decoration: line-through;
-        }
-
-        /* Reset Button Styling */
-        .reset-container {
-            text-align: center;
-            margin-top: 1rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .reset-btn {
-            background-color: #f1f5f9;
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
             transition: all 0.2s ease;
-            display: inline-flex;
+        }
+
+        .task-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+        }
+
+        /* Minimalističke kartice za korake */
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        h2 {
+            color: #0f172a;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .reset-btn:hover {
-            background-color: #e2e8f0;
-            color: #e11d48;
-            border-color: #fda4af;
-        }
-
-        footer {
-            background-color: var(--text-main);
-            color: #fff;
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.875rem;
-        }
-
-        footer p {
-            margin: 0.25rem 0;
-            opacity: 0.9;
-        }
-
-        footer p:last-child {
-            font-size: 0.8rem;
-            opacity: 0.6;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-        
-        @media (max-width: 600px) {
-            .phase {
-                padding: 1rem;
-            }
-            .task {
-                padding: 0.5rem;
-            }
+        .step-description {
+            color: #475569;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
         }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-<div class="container">
-    <header>
-        <h1>SOP: Postavljanje sajta na GitHub Pages</h1>
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+    <!-- Zaglavlje i Progres traka (Zakačeno za vrh) -->
+    <div class="progress-bar-container shadow-sm">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-2">
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Postavljanje sajta na GitHub Pages</h1>
+                <span id="progress-text" class="text-lg font-bold text-emerald-600">0%</span>
+            </div>
+            <div class="progress-track">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
         </div>
-        <div class="progress-text">
-            <span>Tvoj napredak</span>
-            <span id="progressPercentage">0%</span>
-        </div>
-    </header>
+    </div>
 
-    <main>
-        <!-- Faza 1 -->
-        <div class="phase">
-            <h2>🟢 Faza 1: Priprema naloga</h2>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Poseti github.com.</span>
+    <!-- Glavni sadržaj -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        
+        <!-- Korak 1 -->
+        <section class="step-card">
+            <h2>📁 Korak 1: Pripremi fajl na svom računaru</h2>
+            <p class="step-description">GitHub Pages traži da se glavni fajl zove tačno <strong>index.html</strong> kako bi znao šta da prikaže čim neko poseti tvoj link.</p>
+            
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Napravi novi folder na radnoj površini (npr. "moj_sajt_skool_dashboard").</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na Sign up i kreiraj besplatan nalog (ako ga već nemaš).</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Otvori taj folder.</span>
             </label>
-        </div>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Desni klik -> New -> Text Document.</span>
+            </label>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Nazovi ga <strong>index.html</strong> (obrati pažnju da obrišeš .txt ekstenziju ako se pojavi).</span>
+            </label>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Otvori taj fajl u Notepadu (ili bilo kom editoru), nalepi sav kod koji imaš.</span>
+            </label>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Sačuvaj (Save).</span>
+            </label>
+        </section>
 
-        <!-- Faza 2 -->
-        <div class="phase">
-            <h2>📂 Faza 2: Kreiranje repozitorijuma (foldera za sajt)</h2>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na zeleno dugme New ili znak + i izaberi New repository.</span>
+        <!-- Korak 2 -->
+        <section class="step-card">
+            <h2>👤 Korak 2: Napravi nalog i "Repository" na GitHub-u</h2>
+            
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Idi na github.com i napravi besplatan nalog ako ga nemaš.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Unesi Repository name (ime bez razmaka, koristi crtice).</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Kada se uloguješ, klikni na dugme "New" (zeleno dugme pored "Top Repositories") ili na "+" ikonicu u gornjem desnom uglu pa na "New repository".</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Proveri da li je podešeno na Public.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Repository name: Upiši bilo šta (npr. skool-dashboard).</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Čekiraj opciju Add a README file.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Označi da bude <strong>Public</strong>.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na Create repository.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Ostalo ostavi kako jeste i klikni na zeleno dugme "Create repository".</span>
             </label>
-        </div>
+        </section>
 
-        <!-- Faza 3 -->
-        <div class="phase">
-            <h2>📤 Faza 3: Otpremanje fajlova</h2>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na dugme Add file i izaberi Upload files.</span>
+        <!-- Korak 3 -->
+        <section class="step-card">
+            <h2>📤 Korak 3: Ubaci svoj fajl</h2>
+            <p class="step-description">Sada ćeš videti stranicu sa puno koda i instrukcija. Ignoriši to i potraži rečenicu (plav font podvučen).</p>
+            
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Pronađi tekst "...or upload an existing file".</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span><strong>PROVERA:</strong> Da li se tvoj glavni fajl zove tačno <code>index.html</code>? (Obavezno preimenuj ako se zove drugačije).</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Klikni na taj link <strong>"upload an existing file"</strong>.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Prevuci index.html (i ostale potrebne fajlove) u polje za otpremanje.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Prevuci svoj index.html fajl iz foldera sa računara direktno u prozor pretraživača.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Skroluj dole i klikni na zeleno dugme Commit changes.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Sačekaj da se učita, a zatim ispod u polje "Commit changes" upiši u opis "Prva objava" (opciono).</span>
             </label>
-        </div>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Klikni na zeleno dugme <strong>"Commit changes"</strong>.</span>
+            </label>
+        </section>
 
-        <!-- Faza 4 -->
-        <div class="phase">
-            <h2>⚙️ Faza 4: Aktiviranje sajta (GitHub Pages)</h2>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na tab Settings u gornjem meniju repozitorijuma.</span>
+        <!-- Korak 4 -->
+        <section class="step-card">
+            <h2>⚙️ Korak 4: Aktiviraj sajt (GitHub Pages)</h2>
+            <p class="step-description">Tvoj fajl je sada na GitHub-u, ali još uvek nije "živ" kao veb sajt.</p>
+            
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">U meniju tog tvog repozitorijuma (na vrhu stranice), klikni na <strong>"Settings"</strong> (ikona zupčanika).</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>U levom meniju (sidebar) pronađi i klikni na Pages.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Sa leve strane u meniju pri dnu klikni na <strong>"Pages"</strong>.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Pod stavkom Source, proveri da li piše Deploy from a branch.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">U sekciji "Build and deployment", pod stavkom "Branch", klikni na dugme gde piše "None" i izaberi <strong>"main"</strong>.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Pod stavkom Branch, izaberi main (ili master) umesto None.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Klikni na dugme <strong>"Save"</strong>.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na dugme Save.</span>
-            </label>
-        </div>
+        </section>
 
-        <!-- Faza 5 -->
-        <div class="phase">
-            <h2>🚀 Faza 5: Objava i provera</h2>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Sačekaj 1-2 minuta.</span>
+        <!-- Korak 5 -->
+        <section class="step-card">
+            <h2>🌐 Korak 5: Tvoj sajt je spreman!</h2>
+            <p class="step-description">Sada sačekaj oko 1-2 minuta.</p>
+            
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Osveži (Refresh) tu istu Pages stranicu u Settings-u.</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Osveži stranicu (F5) dok se ne pojavi poruka: "Your site is live at...".</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Pojaviće se traka na vrhu na kojoj piše: "Your site is live at..." uz link (obično izgleda kao <em>korisnickoime.github.io/skool-dashboard/</em>).</span>
             </label>
-            <label class="task">
-                <input type="checkbox" class="checklist-item">
-                <span>Klikni na dobijeni link ili dugme Visit site da potvrdiš da sve radi.</span>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Klikni na taj link i tvoj sajt će biti dostupan celom svetu!</span>
             </label>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Osveži stranicu (CTRL+F5) dok se ne pojavi poruka: "Your site is live at...".</span>
+            </label>
+            <label class="custom-checkbox">
+                <input type="checkbox" class="sop-checkbox">
+                <div class="checkmark"></div>
+                <span class="task-text">Klikni na dobijeni link ili dugme "Visit site" da potvrdiš da sve radi.</span>
+            </label>
+        </section>
+
+        <!-- Dodatne informacije -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Brzi saveti -->
+            <div class="bg-blue-50 rounded-xl p-6 border border-blue-100">
+                <h3 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">💡 Brzi saveti</h3>
+                <ul class="space-y-4 text-blue-800 text-sm">
+                    <li><strong>🔁 Ažuriranje:</strong> Ako želiš nešto da promeniš u kodu, samo ponovo uđi u repozitorijum, klikni na index.html, klikni na ikonicu olovke (edit), izmeni šta želiš i klikni "Commit changes". Sajt će se sam ažurirati za minut.</li>
+                    <li><strong>⚠️ Greška 404:</strong> Ako odmah nakon klika na link vidiš "404 Not Found", ne paniči. GitHub-u treba malo vremena da prvi put "sklopi" stranicu. Sačekaj minut i osveži.</li>
+                </ul>
+            </div>
+
+            <!-- Provera -->
+            <div class="bg-red-50 rounded-xl p-6 border border-red-100">
+                <h3 class="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">❗ Provera ako ne radi</h3>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="sop-checkbox">
+                    <div class="checkmark bg-white border-red-300"></div>
+                    <span class="task-text text-red-900">Fajl mora biti tačno <strong>index.html</strong></span>
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="sop-checkbox">
+                    <div class="checkmark bg-white border-red-300"></div>
+                    <span class="task-text text-red-900">Ne sme biti index.html.txt</span>
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="sop-checkbox">
+                    <div class="checkmark bg-white border-red-300"></div>
+                    <span class="task-text text-red-900">Branch (grana) u Pages mora biti <strong>main</strong></span>
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="sop-checkbox">
+                    <div class="checkmark bg-white border-red-300"></div>
+                    <span class="task-text text-red-900">Repo mora biti <strong>Public</strong> (Javni)</span>
+                </label>
+            </div>
         </div>
 
         <!-- Dugme za resetovanje -->
-        <div class="reset-container">
-            <button id="resetBtn" class="reset-btn">🔄 Resetuj ček listu za novi sajt</button>
+        <div class="flex justify-center mt-12 mb-8">
+            <button id="btn-reset" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all transform hover:scale-105 flex items-center gap-2">
+                🔄 Resetuj ček listu za novi sajt
+            </button>
         </div>
+
     </main>
 
-    <footer>
-        <p>@2026 Fildeak Mihalj & FM DESIGN DIGITAL STUDIO</p>
-        <p>Korišćenjem digitalnih izdanja čuvamo prirodu!</p>
+    <!-- Futer sa traženim brendiranjem -->
+    <footer class="bg-slate-900 text-slate-300 py-8 text-center mt-auto">
+        <div class="max-w-4xl mx-auto px-6">
+            <p class="font-bold mb-2">@2026 Fildeak Mihalj & FM DESIGN DIGITAL STUDIO</p>
+            <p class="text-sm text-emerald-400">Korišćenjem digitalnih izdanja čuvamo prirodu!</p>
+        </div>
     </footer>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const checkboxes = document.querySelectorAll('.checklist-item');
-        const progressBar = document.getElementById('progressBar');
-        const progressPercentage = document.getElementById('progressPercentage');
-        const totalTasks = checkboxes.length;
+    <!-- Prilagođeni Modal za potvrdu restovanja (Zaobilazi default alert/confirm restrikcije u iframe-u) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform scale-100 transition-transform">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">Da li ste sigurni?</h3>
+            <p class="text-slate-600 mb-8">Ova akcija će obrisati sav vaš dosadašnji napredak iz memorije i resetovati progres na 0%. Da li želite da nastavite?</p>
+            <div class="flex justify-end gap-4">
+                <button id="btn-cancel" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors">
+                    Otkaži
+                </button>
+                <button id="btn-confirm" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">
+                    Da, resetuj sve
+                </button>
+            </div>
+        </div>
+    </div>
 
-        function updateProgress() {
-            const completedTasks = document.querySelectorAll('.checklist-item:checked').length;
-            const percentage = Math.round((completedTasks / totalTasks) * 100);
+    <!-- JavaScript Logika -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.sop-checkbox');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
             
-            progressBar.style.width = percentage + '%';
-            progressPercentage.textContent = percentage + '%';
-            
-            if (percentage === 100) {
-                progressBar.style.backgroundColor = '#059669'; 
-            } else {
-                progressBar.style.backgroundColor = '#10b981'; 
-            }
-        }
+            const btnReset = document.getElementById('btn-reset');
+            const modal = document.getElementById('confirm-modal');
+            const btnCancel = document.getElementById('btn-cancel');
+            const btnConfirm = document.getElementById('btn-confirm');
 
-        // NOVO: Prolazimo kroz svaki checkbox da učitamo i sačuvamo stanje
-        checkboxes.forEach((checkbox, index) => {
-            // 1. Proveravamo da li postoji sačuvano stanje u lokalnoj memoriji pregledača
-            const savedState = localStorage.getItem(`sop_github_task_${index}`);
-            if (savedState === 'true') {
-                checkbox.checked = true;
-            }
+            const STORAGE_KEY = 'github_pages_sop_progress';
 
-            // 2. Svaki put kada se checkbox klikne, čuvamo njegovo novo stanje u memoriju
-            checkbox.addEventListener('change', () => {
-                localStorage.setItem(`sop_github_task_${index}`, checkbox.checked);
-                updateProgress();
-            });
-        });
-
-        // NOVO: Funkcionalnost za dugme Reset
-        const resetBtn = document.getElementById('resetBtn');
-        resetBtn.addEventListener('click', () => {
-            if (confirm('Da li si siguran da želiš da obrišeš trenutni progres i kreneš ispočetka?')) {
-                checkboxes.forEach((checkbox, index) => {
-                    checkbox.checked = false; // Unčekiraj
-                    localStorage.removeItem(`sop_github_task_${index}`); // Obriši iz memorije
+            // Funkcija za računanje i ažuriranje progresa
+            const updateProgress = () => {
+                const total = checkboxes.length;
+                let checkedCount = 0;
+                
+                checkboxes.forEach(cb => {
+                    if (cb.checked) checkedCount++;
                 });
-                updateProgress(); // Ažuriraj progres bar na 0%
-            }
+
+                const percentage = total === 0 ? 0 : Math.round((checkedCount / total) * 100);
+                
+                // Vizuelno ažuriranje
+                progressFill.style.width = `${percentage}%`;
+                progressText.textContent = `${percentage}%`;
+                
+                // Promena boje teksta na 100%
+                if(percentage === 100) {
+                    progressText.classList.remove('text-emerald-600');
+                    progressText.classList.add('text-emerald-500', 'scale-110', 'transform', 'transition-transform');
+                } else {
+                    progressText.classList.add('text-emerald-600');
+                    progressText.classList.remove('text-emerald-500', 'scale-110', 'transform', 'transition-transform');
+                }
+            };
+
+            // Čuvanje stanja u localStorage
+            const saveState = () => {
+                const state = Array.from(checkboxes).map(cb => cb.checked);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            };
+
+            // Učitavanje stanja iz localStorage
+            const loadState = () => {
+                const savedState = localStorage.getItem(STORAGE_KEY);
+                if (savedState) {
+                    try {
+                        const parsedState = JSON.parse(savedState);
+                        checkboxes.forEach((cb, index) => {
+                            if (parsedState[index] !== undefined) {
+                                cb.checked = parsedState[index];
+                            }
+                        });
+                    } catch (e) {
+                        console.error('Greška pri učitavanju localStorage podataka', e);
+                    }
+                }
+                updateProgress();
+            };
+
+            // Dodavanje Event Listenera na svaki checkbox
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    updateProgress();
+                    saveState();
+                });
+            });
+
+            // Logika za iskačući prozor (Modal)
+            const showModal = () => modal.classList.remove('hidden');
+            const hideModal = () => modal.classList.add('hidden');
+
+            btnReset.addEventListener('click', showModal);
+            btnCancel.addEventListener('click', hideModal);
+
+            // Zatvaranje modala klikom izvan njega
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) hideModal();
+            });
+
+            // Potvrda restovanja
+            btnConfirm.addEventListener('click', () => {
+                checkboxes.forEach(cb => cb.checked = false);
+                updateProgress();
+                saveState(); // Čuva prazno stanje u memoriji
+                hideModal();
+                
+                // Opcijano: skrol na vrh ekrana nakon reseta
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Inicijalno učitavanje pri otvaranju stranice
+            loadState();
         });
-
-        // Osvežavamo progres bar odmah pri učitavanju stranice na osnovu zapamćenih čekiranja
-        updateProgress();
-    });
-</script>
-
+    </script>
 </body>
 </html>
