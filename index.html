@@ -341,9 +341,23 @@
             }
         }
 
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateProgress);
+        // NOVO: Prolazimo kroz svaki checkbox da učitamo i sačuvamo stanje
+        checkboxes.forEach((checkbox, index) => {
+            // 1. Proveravamo da li postoji sačuvano stanje u lokalnoj memoriji pregledača
+            const savedState = localStorage.getItem(`sop_github_task_${index}`);
+            if (savedState === 'true') {
+                checkbox.checked = true;
+            }
+
+            // 2. Svaki put kada se checkbox klikne, čuvamo njegovo novo stanje u memoriju
+            checkbox.addEventListener('change', () => {
+                localStorage.setItem(`sop_github_task_${index}`, checkbox.checked);
+                updateProgress();
+            });
         });
+
+        // Osvežavamo progres bar odmah pri učitavanju stranice na osnovu zapamćenih čekiranja
+        updateProgress();
     });
 </script>
 
