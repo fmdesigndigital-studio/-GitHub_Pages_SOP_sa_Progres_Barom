@@ -167,6 +167,35 @@
             text-decoration: line-through;
         }
 
+        /* Reset Button Styling */
+        .reset-container {
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .reset-btn {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reset-btn:hover {
+            background-color: #e2e8f0;
+            color: #e11d48;
+            border-color: #fda4af;
+        }
+
         footer {
             background-color: var(--text-main);
             color: #fff;
@@ -312,6 +341,11 @@
                 <span>Klikni na dobijeni link ili dugme Visit site da potvrdiš da sve radi.</span>
             </label>
         </div>
+
+        <!-- Dugme za resetovanje -->
+        <div class="reset-container">
+            <button id="resetBtn" class="reset-btn">🔄 Resetuj ček listu za novi sajt</button>
+        </div>
     </main>
 
     <footer>
@@ -354,6 +388,18 @@
                 localStorage.setItem(`sop_github_task_${index}`, checkbox.checked);
                 updateProgress();
             });
+        });
+
+        // NOVO: Funkcionalnost za dugme Reset
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Da li si siguran da želiš da obrišeš trenutni progres i kreneš ispočetka?')) {
+                checkboxes.forEach((checkbox, index) => {
+                    checkbox.checked = false; // Unčekiraj
+                    localStorage.removeItem(`sop_github_task_${index}`); // Obriši iz memorije
+                });
+                updateProgress(); // Ažuriraj progres bar na 0%
+            }
         });
 
         // Osvežavamo progres bar odmah pri učitavanju stranice na osnovu zapamćenih čekiranja
